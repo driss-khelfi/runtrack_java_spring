@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ma Vue Thymeleaf</title>
+</head>
+<body>
+<h1>Liste d'objets :</h1>
+<ul>
+    <li th:each="obj : ${myObjectList}">
+        <span th:text="${obj.name}"></span>
+    </li>
+</ul>
+
+<form th:action="@{/submit}" method="post">
+    <label for="name">Nom :</label>
+    <input type="text" id="name" name="name">
+
+    <label for="age">Âge :</label>
+    <input type="text" id="age" name="age">
+
+    <div th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Erreur d'âge</div>
+
+    <input type="submit" value="Soumettre">
+</form>
+
+</body>
+</html>
