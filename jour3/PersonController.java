@@ -3,41 +3,54 @@ package com.example.demo6;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
-@RequestMapping("/persons") // L'URL de base pour ce contrôleur
+@RequestMapping("/persons")
 public class PersonController {
 
     @Autowired
     private PersonRepository personRepository;
 
-    @GetMapping("/list")
-    public String listPersons(Model model) {
-        // Récupérer la liste des personnes depuis le repository
-        Iterable<Person> persons = personRepository.findAll();
-
-        // Ajouter la liste des personnes à l'objet Model pour l'affichage
-        model.addAttribute("persons", persons);
-
-        // Retourner le nom de la vue à afficher (par exemple, "personList")
-        return "personList";
+    // Afficher le formulaire de mise à jour
+    @GetMapping("/edit/{id}")
+    public String editPersonForm(@PathVariable Long id, Model model) {
+        Optional<Person> optionalPerson = personRepository.findById(id);
+        if (optionalPerson.isPresent()) {
+            model.addAttribute("person", optionalPerson.get());
+            return "editPerson";
+        } else {
+            // Gérer le cas où la personne n'a pas été trouvée
+            return "redirect:/persons/list";
+        }
     }
 
-    @GetMapping("/create")
-    public String createPersonForm() {
-        // Afficher le formulaire de création de personne (s'il y en a un)
-        return "personForm";
+    // Gérer la soumission du formulaire de mise à jour
+    @PostMapping("/update")
+    public String updatePerson(@ModelAttribute Person updatedPerson) {
+        personRepository.save(updatedPerson);
+        return "redirect:/persons/list";
     }
 
-    @PostMapping("/create")
-    public String createPerson(Person person) {
-        // Enregistrer la nouvelle personne dans le repository
-        personRepository.save(person);
+    // Afficher la page de confirmation de suppression
+    @GetMapping("/delete/{id}")
+    public String deletePersonConfirmation(@PathVariable Long id, Model model) {
+        Optional<Person> optionalPerson = personRepository.findById(id);
+        if (optionalPerson.isPresent()) {
+            model.addAttribute("person", optionalPerson.get());
+            return "deleteConfirmation";
+        } else {
+            // Gérer le cas où la personne n'a pas été trouvée
+            return "redirect:/persons/list";
+        }
+    }
 
-        // Rediriger vers la liste des personnes après la création
+    // Confirmer et gérer la suppression de la personne
+    @PostMapping("/delete/{id}")
+    public String deletePerson(@PathVariable Long id) {
+        personRepository.deleteById(id);
         return "redirect:/persons/list";
     }
 }
