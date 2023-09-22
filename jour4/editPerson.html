@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mise à jour de la Personne</title>
+</head>
+<body>
+<h1>Mise à jour de la Personne</h1>
+<form th:action="@{/persons/update}" method="post" th:object="${person}">
+    <input type="hidden" th:field="*{id}" />
+    <label>Nom: <input type="text" th:field="*{name}" /></label><br />
+    <label>Âge: <input type="number" th:field="*{age}" /></label><br />
+    <input type="submit" value="Mettre à jour" />
+</form>
+</body>
+</html>
